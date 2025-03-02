@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Diagnosis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+        <h2 class="text-2xl font-bold text-blue-600">AI Medical Diagnosis</h2>
+        <p class="text-gray-500 mt-2">Upload a Chest X-ray to detect Pneumonia</p>
+
+        <label for="fileInput" class="block mt-4 cursor-pointer">
+            <div class="bg-blue-500 text-white py-2 px-4 rounded-full inline-block shadow hover:bg-blue-600">
+                Choose an X-ray
+            </div>
+        </label>
+        <input type="file" id="fileInput" class="hidden" onchange="previewImage(event)">
+
+        <img id="xrayImage" class="mt-4 w-40 h-40 object-cover mx-auto hidden border rounded-lg shadow-md" />
+
+        <button onclick="uploadImage()" 
+            class="bg-green-500 text-white px-4 py-2 rounded-full mt-4 shadow-lg hover:bg-green-600">
+            Predict
+        </button>
+
+        <div id="loading" class="mt-4 text-gray-500 hidden">Processing...</div>
+
+        <h3 class="text-lg font-bold mt-4">Prediction: 
+            <span id="result" class="text-blue-600"></span>
+        </h3>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            let img = document.getElementById("xrayImage");
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.classList.remove("hidden");
+        }
+
+        function uploadImage() {
+            let file = document.getElementById("fileInput").files[0];
+            let formData = new FormData();
+            formData.append("file", file);
+
+            document.getElementById("loading").classList.remove("hidden");
+            document.getElementById("result").innerText = "";
+
+            fetch("/predict", { method: "POST", body: formData })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("result").innerText = data.prediction;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+
+</body>
+</html>

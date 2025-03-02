@@ -1,0 +1,17 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv("data.csv")
+
+# Plot a column
+plt.figure(figsize=(8, 5))
+plt.hist(df["column_name"], bins=20, color="blue", alpha=0.7)
+
+# Labels and title
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.title("Histogram of Column")
+
+# Show plot
+plt.show()
